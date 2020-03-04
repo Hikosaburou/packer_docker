@@ -1,0 +1,2 @@
+# packer_docker
+Dockerコンテナをpackerで焼いてみる
