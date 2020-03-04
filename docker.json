@@ -1,0 +1,37 @@
+{
+    "builders": [
+        {
+            "type": "docker",
+            "image": "amazonlinux:2-with-sources",
+            "export_path": "amazonlinux_alt.tar"
+        }
+    ],
+    "provisioners": [
+        {
+            "type": "shell",
+            "inline": [
+                "set -ex",
+                "yum install -y shadow-utils sudo util-linux",
+                "useradd ec2-user",
+                "usermod -G wheel ec2-user",
+                "echo 'ec2-user ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers.d/ec2-user"
+            ]
+        },
+        {
+            "type": "shell",
+            "execute_command": "su -c '{{ .Vars }} {{ .Path }}' - ec2-user",
+            "inline": [
+                "set -ex",
+                "id",
+                "sudo echo 'root user'"
+            ]
+        }
+    ],
+    "post-processors": [
+        {
+            "type": "docker-import",
+            "repository": "hikosaburou/amazonlinux-alt",
+            "tag": "0.1"
+        }
+    ]
+}
